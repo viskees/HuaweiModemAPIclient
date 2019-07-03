@@ -26,7 +26,7 @@ if aantal_sms_int > 0:
         index = sms['response']['Messages']['Message'][0]['Index']
 
         # verwijder SMS op basis van index
-        print('SMS met index: {0} '.format(index))
+        #print('SMS met index: {0} '.format(index))
         huaweisms.api.sms.delete_sms(ctx, index)
 
         # aantal SMS-jes met 1 verlagen
@@ -38,4 +38,5 @@ if aantal_sms_int > 0:
 
 else:
     # niets te doen
+    #print('nothing to do')
     exit()

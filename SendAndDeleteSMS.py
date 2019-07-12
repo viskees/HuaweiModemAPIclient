@@ -12,8 +12,9 @@ aantal_sms = huaweisms.api.sms.sms_count(ctx)
 aantal_sms_int = int(aantal_sms['response']['LocalInbox'])
 
 # bepaal of er SMS berichten zijn ontvangen en als er een bericht is, verwijder dit bericht en stuur een 1 GB Booster SMS naar Tele2
+# 1 bericht in de Inbox is oke, want dit is waarschijnlijk de reply op het booster request
 
-if aantal_sms_int > 0:
+if aantal_sms_int > 1:
 
     # SMS ontvangen sinds de laatste controle; we nemen even aan dat dit een bericht betreft dat we tegen de 5 GB zitten
     # dus we moeten de bundelbooster inschakelen en de SMS inbox leegmaken

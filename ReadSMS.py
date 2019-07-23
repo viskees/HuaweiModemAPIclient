@@ -13,4 +13,4 @@ aantal_sms_int = int(aantal_sms['response']['LocalInbox'])
 print('aantal SMS-jes in de inbox: {0}'.format(aantal_sms_int))
 
 #print de SMS berichten
-print(huaweisms.api.sms.get_sms(ctx, 1, 1))
+print(huaweisms.api.sms.get_sms(ctx,1,1))

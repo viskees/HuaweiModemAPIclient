@@ -15,7 +15,7 @@ aantal_sms_int = int(aantal_sms['response']['LocalInbox'])
 # 1 bericht in de Inbox is oke, want dit is waarschijnlijk de reply op het booster request
 
 # definieer SMS contentberichten die mogen worden verwijderd
-sms_content_del_oke = ['Gelukt! Je BundelBooster \nvan 1GB is geactiveerd. \nWe houden contact. \nTele2', 'Test', 'Test1']
+sms_content_del_oke = ['Beste klant, je hebt nog 500 MB van je dagelijkse databundel over. Een gratis BundelBooster van 1GB activeren? Dat kan via de MijnTele2 App of in MijnTele2. Meer info? http://bundelactivatie.tele2.nl/. Groet, Tele2','Beste klant, je hebt 100% van je dagelijkse databundel gebruikt. Een gratis BundelBooster van 1GB activeren? Dat kan via de MijnTele2 App of in MijnTele2. Meer info?  http://bundelactivatie.tele2.nl/. Groet, Tele2', 'Gelukt! Je BundelBooster \nvan 1GB is geactiveerd. \nWe houden contact. \nTele2', 'Test', 'Test1']
 
 if aantal_sms_int > 1:
 
@@ -42,7 +42,7 @@ if aantal_sms_int > 1:
 
         if sms_verwijderen == 1:
             #bekende SMS; deze mag worden verwijderd op basis van index
-            print('Deze SMS mag worden verwijderd: ' + sms['response']['Messages']['Message'][0]['Content'])
+            #print('Deze SMS mag worden verwijderd: ' + sms['response']['Messages']['Message'][0]['Content'])
             #print('SMS met index: {0} '.format(index))
             huaweisms.api.sms.delete_sms(ctx, index)
 

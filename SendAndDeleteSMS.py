@@ -19,45 +19,70 @@ sms_content_del_oke = ['Beste klant, je hebt nog 500 MB van je dagelijkse databu
 
 if aantal_sms_int > 1:
 
-    # SMS ontvangen sinds de laatste controle; we nemen even aan dat dit een bericht betreft dat we tegen de 5 GB zitten
-    # dus we moeten de bundelbooster inschakelen en de SMS inbox leegmaken
+    # SMS ontvangen sinds de laatste controle; mogelijk dat de we de bundelbooster moeten gebruiken
+    # test als eerste of het laatste berichtje de content "oké" betreft, want dan mag alles verwijderd
 
-    # maak de inbox leeg en verwijder alle SMS berichten
-    while aantal_sms_int > 0:
+    sms = huaweisms.api.sms.get_sms(ctx, 1, 1)
 
-        # bepaal SMS index en verwijder het bericht op basis van deze index als deze voorkomt in sms_content_del_oke
-        sms = huaweisms.api.sms.get_sms(ctx, 1, 1)
-        index = sms['response']['Messages']['Message'][0]['Index']
+    if sms['response']['Messages']['Message'][0]['Content'] == "OK":
 
-        #bepaal op basis van de content van de SMS of deze verwijderd mag worden
-        sms_verwijderen = 0
+        # Het betreft een oké berichtje dus alle SMS-jes mogen verwijderd
 
-        for sms_content in sms_content_del_oke:
+        while aantal_sms_int > 0:
 
-            if sms_content == sms['response']['Messages']['Message'][0]['Content']:
-                # SMS mag worden verwijderd
-                sms_verwijderen = 1
-            else:
-                continue
+            # bepaal SMS index en verwijder het bericht
 
-        if sms_verwijderen == 1:
-            #bekende SMS; deze mag worden verwijderd op basis van index
-            #print('Deze SMS mag worden verwijderd: ' + sms['response']['Messages']['Message'][0]['Content'])
-            #print('SMS met index: {0} '.format(index))
+            sms = huaweisms.api.sms.get_sms(ctx, 1, 1)
+            index = sms['response']['Messages']['Message'][0]['Index']
+
             huaweisms.api.sms.delete_sms(ctx, index)
 
             # aantal SMS-jes met 1 verlagen
             aantal_sms_int -= 1
 
-        else:
-            # content van de SMS komt niet voor in de lijst met bekende SMS berichten, dus mag niet worden verwijderd
-            # bundelbooster niet versturen
-            # SMS content naar mobiel van Kees versturen
-            huaweisms.api.sms.send_sms(ctx, '0612156835', 'Deze SMS heb ik van Tele2 ontvangen: ' + sms['response']['Messages']['Message'][0]['Content'])
-            exit()
+    # geen "oké" berichtje; scan op bekende SMS-jes en verwijder deze
+    # stuur de Bundel SMS uit
 
-    #alle SMS-jes zijn verwijderd, activeer de bundelbooster
-    huaweisms.api.sms.send_sms(ctx, '1280', 'NOG 1GB')
+    else:
+
+        while aantal_sms_int > 0:
+
+            # bepaal SMS index en verwijder het bericht op basis van deze index als deze voorkomt in sms_content_del_oke
+            # als het bericht niet voorkomt in de sms_content_del_oke lijst, stuur Kees dan een SMS met de inhoud
+
+            sms = huaweisms.api.sms.get_sms(ctx, 1, 1)
+            index = sms['response']['Messages']['Message'][0]['Index']
+
+            #bepaal op basis van de content van de SMS of deze verwijderd mag worden
+
+            sms_verwijderen = 0
+
+            for sms_content in sms_content_del_oke:
+
+                if sms_content == sms['response']['Messages']['Message'][0]['Content']:
+                    # SMS mag worden verwijderd
+                    sms_verwijderen = 1
+                else:
+                    continue
+
+            if sms_verwijderen == 1:
+                #bekende SMS; deze mag worden verwijderd op basis van index
+                #print('Deze SMS mag worden verwijderd: ' + sms['response']['Messages']['Message'][0]['Content'])
+                #print('SMS met index: {0} '.format(index))
+                huaweisms.api.sms.delete_sms(ctx, index)
+
+                # aantal SMS-jes met 1 verlagen
+                aantal_sms_int -= 1
+
+            else:
+                # content van de SMS komt niet voor in de lijst met bekende SMS berichten, dus mag niet worden verwijderd
+                # bundelbooster niet versturen
+                # SMS content naar mobiel van Kees versturen
+                huaweisms.api.sms.send_sms(ctx, '0612156835', 'Deze SMS heb ik van Tele2 ontvangen: ' + sms['response']['Messages']['Message'][0]['Content'])
+                exit()
+
+        #alle SMS-jes zijn verwijderd, activeer de bundelbooster
+        huaweisms.api.sms.send_sms(ctx, '1280', 'NOG 1GB')
 
 else:
     # niets te doen

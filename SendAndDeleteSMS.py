@@ -12,7 +12,7 @@ aantal_sms = huaweisms.api.sms.sms_count(ctx)
 aantal_sms_int = int(aantal_sms['response']['LocalInbox'])
 
 # bepaal of er SMS berichten zijn ontvangen en als er een bericht is, verwijder dit bericht en stuur een 1 GB Booster SMS naar Tele2
-# 1 bericht in de Inbox is oke, want dit is waarschijnlijk de reply op het booster request
+# 1 bericht in de Inbox is OK, want dit is waarschijnlijk de reply op het booster request
 
 # definieer SMS contentberichten die mogen worden verwijderd
 sms_content_del_oke = ['Beste klant, je hebt nog 500 MB van je dagelijkse databundel over. Een gratis BundelBooster van 1GB activeren? Dat kan via de MijnTele2 App of in MijnTele2. Meer info? http://bundelactivatie.tele2.nl/. Groet, Tele2','Beste klant, je hebt 100% van je dagelijkse databundel gebruikt. Een gratis BundelBooster van 1GB activeren? Dat kan via de MijnTele2 App of in MijnTele2. Meer info?  http://bundelactivatie.tele2.nl/. Groet, Tele2', 'Gelukt! Je BundelBooster \nvan 1GB is geactiveerd. \nWe houden contact. \nTele2', 'Test', 'Test1']
@@ -20,13 +20,13 @@ sms_content_del_oke = ['Beste klant, je hebt nog 500 MB van je dagelijkse databu
 if aantal_sms_int > 1:
 
     # SMS ontvangen sinds de laatste controle; mogelijk dat de we de bundelbooster moeten gebruiken
-    # test als eerste of het laatste berichtje de content "oké" betreft, want dan mag alles verwijderd
+    # test als eerste of het laatste berichtje de content OK betreft, want dan mag alles verwijderd
 
     sms = huaweisms.api.sms.get_sms(ctx, 1, 1)
 
     if sms['response']['Messages']['Message'][0]['Content'] == "OK":
 
-        # Het betreft een oké berichtje dus alle SMS-jes mogen verwijderd
+        # Het betreft een OK berichtje dus alle SMS-jes mogen verwijderd
 
         while aantal_sms_int > 0:
 
@@ -40,7 +40,10 @@ if aantal_sms_int > 1:
             # aantal SMS-jes met 1 verlagen
             aantal_sms_int -= 1
 
-    # geen "oké" berichtje; scan op bekende SMS-jes en verwijder deze
+        # alle SMS-jes zijn verwijderd, activeer de bundelbooster
+        huaweisms.api.sms.send_sms(ctx, '1280', 'NOG 1GB')
+
+    # geen OK berichtje; scan op bekende SMS-jes en verwijder deze
     # stuur de Bundel SMS uit
 
     else:
